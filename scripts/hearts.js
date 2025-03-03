@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
         ],
         specialHeartChance: 0.20, // 20% chance for special hearts
         specialHeartPoints: 5,
-        encouragingMessageDuration: 2000 // Duration in ms for encouraging messages
+        encouragingMessageDuration: 500 // Duration in ms for encouraging messages
     };
     
     // Game state
@@ -408,8 +408,10 @@ document.addEventListener("DOMContentLoaded", function () {
         timerElement.textContent = timeRemaining;
         
         if (timeRemaining <= 0) {
-            // Level up or end game
-            if (level < config.maxLevel) {
+            // Check if player failed to catch any hearts in level 1
+            if (level === 1 && heartsCaught === 0) {
+                endGame(false, true); // Pass true as second parameter to indicate zero score
+            } else if (level < config.maxLevel) {
                 levelUp();
             } else {
                 endGame(true); // Game completed successfully
@@ -473,7 +475,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     // End the game
-    function endGame(completed = false) {
+    function endGame(completed = false, zeroScore = false) {
         gameActive = false;
         gamePaused = false;
         
@@ -505,17 +507,15 @@ document.addEventListener("DOMContentLoaded", function () {
         // Choose medal and message based on score and completion
         let medal, message;
         
-        if (completed) {
-            // Game completed (all levels finished)
+        if (zeroScore) {
+            medal = "😢";
+            message = "Oh no! Try to catch some hearts next time!";
+        } else if (completed) {
             medal = "🏆";
             message = "Congratulations! You completed all levels!";
         } else {
-            // Game ended normally
             if (score >= 100) {
                 medal = "🥇";
-                message = "Amazing! You're a heart-catching master!";
-            } else if (score >= 70) {
-                medal = "🥈";
                 message = "Excellent job! Almost perfect!";
             } else if (score >= 40) {
                 medal = "🥉";

@@ -1081,17 +1081,24 @@ bgMusic.autoplay = true; // Add autoplay attribute
 function addMusicControls() {
     const musicButton = document.createElement('button');
     musicButton.id = 'musicToggle';
-    musicButton.innerHTML = '🔊'; // Start with the playing icon
+    musicButton.innerHTML = '🔊';
     musicButton.style.cssText = `
         position: fixed;
         bottom: 20px;
         right: 20px;
-        padding: 10px;
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
         border: none;
         background: rgba(255, 255, 255, 0.8);
         cursor: pointer;
         z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 50px;
+        aspect-ratio: 1;
+        font-size: 1.2rem;
     `;
 
     document.body.appendChild(musicButton);
