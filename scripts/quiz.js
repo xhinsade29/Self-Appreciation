@@ -1,9 +1,9 @@
 // Enhanced quiz.js with animations and improved functionality
 const questions = [
-    { text: "Would you rather go on a fancy dinner date or a cozy movie night?", images: ["resources/dinner.jpg", "resources/movie.jpg"] },
-    { text: "Would you rather receive handwritten love letters or surprise gifts?", images: ["resources/letter.jpg", "resources/gifts.jpg"] },
-    { text: "Would you rather go on a spontaneous road trip or a well-planned vacation?", images: ["resources/roadtrip.jpg", "resources/vacation.jpg"] },
-    { text: "Would you rather have a picnic in the park or a candlelit dinner at home?", images: ["resources/picnic.jpg", "resources/dinnerhome.jpg"] }
+    { text: "Would you rather go on a fancy dinner date or a cozy movie night?", images: ["lib-quiz/dinner.jpg", "lib-quiz/movie.jpg"] },
+    { text: "Would you rather receive handwritten love letters or surprise gifts?", images: ["lib-quiz/letter.jpg", "lib-quiz/gifts.jpg"] },
+    { text: "Would you rather go on a spontaneous road trip or a well-planned vacation?", images: ["lib-quiz/roadtrip.jpg", "lib-quiz/vacation.jpg"] },
+    { text: "Would you rather have a picnic in the park or a candlelit dinner at home?", images: ["lib-quiz/picnic.jpg", "lib-quiz/dinnerhome.jpg"] }
 ];
 
 const rouletteOptions = [
@@ -48,6 +48,11 @@ function loadQuestion() {
             options[0] = options[0].replace("Would you rather ", "");
             options[1] = options[1].replace("?", "");
             
+            const img1 = questions[currentQuestion].images[0] || "placeholder.jpg";
+            const img2 = questions[currentQuestion].images[1] || "placeholder.jpg";
+            
+            document.getElementById("option1-img").src = img1;
+            document.getElementById("option2-img").src = img2;
             document.getElementById("option1-text").innerText = options[0];
             document.getElementById("option2-text").innerText = options[1];
             document.getElementById("option1-img").src = questions[currentQuestion].images[0];
@@ -221,9 +226,6 @@ function goHome() {
 }
 
 // Background music setup
-const bgMusic = new Audio('music-effects/blue.mp3');
-bgMusic.loop = true;
-bgMusic.volume = 0.3;
 bgMusic.autoplay = true; // Add autoplay attribute
 
 // Add music controls to the page
@@ -363,6 +365,12 @@ style.textContent = `
         to { transform: scale(0.8); opacity: 0; }
     }
     
+    @keyframes float {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+        100% { transform: translateY(0); }
+    }
+    
     .segment-label {
         position: absolute;
         top: 50%;
@@ -373,36 +381,132 @@ style.textContent = `
         transform-origin: center;
         text-shadow: 0 0 3px rgba(0,0,0,0.5);
     }
+    
+    .heart {
+        position: absolute;
+        animation: float infinite ease-in-out;
+        pointer-events: none;
+    }
 `;
 document.head.appendChild(style);
 
- // Theme toggle
- const themeToggle = document.getElementById('themeToggle');
- const themeIcon = themeToggle.querySelector('.theme-icon');
- 
- // Check saved theme on load
- if (localStorage.getItem('darkMode') === 'true') {
-     document.body.classList.add('dark-mode');
-     themeIcon.textContent = '☀️';
- } else {
-     themeIcon.textContent = '🌙';
- }
- 
- themeToggle.addEventListener('click', () => {
-     document.body.classList.toggle('dark-mode');
-     const isDarkMode = document.body.classList.contains('dark-mode');
-     localStorage.setItem('darkMode', isDarkMode);
-     
-     if (isDarkMode) {
-         themeIcon.textContent = '☀️';
-     } else {
-         themeIcon.textContent = '🌙';
-     }
- });
+// Add this new function
+function initThemeToggle() {
+    const themeToggle = document.createElement('button');
+    themeToggle.id = 'themeToggle';
+    themeToggle.className = 'utility-button'; // Add utility-button class
+    themeToggle.innerHTML = '🌙';
+    
+    // Add styles for theme toggle
+    const themeStyles = document.createElement('style');
+    themeStyles.textContent = `
+        #themeToggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px !important;
+            height: 50px !important;
+            padding: 0;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 50px;
+            aspect-ratio: 1;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        #themeToggle:hover {
+            transform: scale(1.1);
+        }
 
-   // Generate floating hearts in the background
-   function createFloatingHearts() {
-    const heartsBg = document.getElementById('heartsBg');
+        @media (max-width: 768px) {
+            #themeToggle {
+                width: 50px !important;
+                height: 50px !important;
+                margin: 0 10px;
+            }
+        }
+    `;
+    document.head.appendChild(themeStyles);
+    
+    // Load saved theme preference
+    const savedTheme = localStorage.getItem('darkMode');
+    if (savedTheme === 'true') {
+        document.body.classList.add('dark-mode');
+        themeToggle.innerHTML = '☀️';
+    }
+    
+    // Add click handler
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        themeToggle.innerHTML = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    });
+    
+    document.body.appendChild(themeToggle);
+}
+
+// Add dark mode styles
+const darkModeStyles = document.createElement('style');
+darkModeStyles.textContent = `
+body.dark-mode {
+background: linear-gradient(135deg, #2c1338, #1a0f24);
+}
+
+body.dark-mode .card {
+background: linear-gradient(135deg, #3a1f47, #2c1338);
+}
+
+body.dark-mode .modal-content {
+background: linear-gradient(135deg, #3a1f47, #2c1338);
+color: white;
+}
+
+body.dark-mode #modalCard p {
+background-color: rgba(255, 255, 255, 0.1);
+color: white;
+}
+
+body.dark-mode .difficulty-btn {
+background: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .difficulty-btn:hover,
+body.dark-mode .difficulty-btn.active {
+background: rgba(255, 255, 255, 0.2);
+}
+
+/* Adjust title color in dark mode */
+body.dark-mode h1 {
+color: #dedede; /* Lighter shade for dark mode title */
+}
+`;
+document.head.appendChild(darkModeStyles);
+
+// Initialize the theme toggle button   
+initThemeToggle();
+
+// Modified floating hearts function
+function createFloatingHearts() {
+    // Create hearts container if it doesn't exist
+    let heartsBg = document.getElementById('heartsBg');
+    if (!heartsBg) {
+        heartsBg = document.createElement('div');
+        heartsBg.id = 'heartsBg';
+        heartsBg.style.position = 'fixed';
+        heartsBg.style.width = '100%';
+        heartsBg.style.height = '100%';
+        heartsBg.style.pointerEvents = 'none';
+        heartsBg.style.zIndex = '-1';
+        document.body.prepend(heartsBg);
+    }
+
     const numHearts = 15;
     
     for (let i = 0; i < numHearts; i++) {
