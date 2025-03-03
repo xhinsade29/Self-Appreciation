@@ -491,6 +491,8 @@ function shareMessage() {
         copyButton.onclick = function() {
             const linkInput = document.getElementById('shareLink');
             if (linkInput) {
+                // Update this line to your desired share link
+                linkInput.value = 'https://xhinsade29.github.io/Self-Appreciation/';
                 linkInput.select();
                 document.execCommand('copy');
                 this.textContent = 'Copied!';
@@ -505,7 +507,8 @@ function shareMessage() {
     document.querySelectorAll('.share-button').forEach(button => {
         button.onclick = function() {
             const platform = this.getAttribute('data-platform');
-            const url = encodeURIComponent(window.location.href);
+            // Update this line to your desired share link
+            const url = encodeURIComponent('https://xhinsade29.github.io/Self-Appreciation/');
             const text = encodeURIComponent('I found this beautiful self-love letter and wanted to share it with you!');
             
             let shareUrl;
